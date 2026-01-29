@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MemberList } from './components/MemberList';
 import { CreateMemberForm } from './components/CreateMemberForm';
+import { MemberDetail } from './components/MemberDetail';
 import type { Member } from './types';
 
 function App() {
@@ -28,10 +29,7 @@ function App() {
 
             {selectedMember && (
               <div className="bg-white p-6 rounded-lg shadow">
-                <h2 className="text-lg font-semibold mb-4">
-                  {selectedMember.firstName} {selectedMember.lastName}
-                </h2>
-                <p className="text-gray-600">{selectedMember.email}</p>
+                <MemberDetail memberId={selectedMember.id} />
               </div>
             )}
           </div>
