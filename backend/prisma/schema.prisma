@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships Membership[]
+  checkIns    CheckIn[]
+
+  @@index([email])
+  @@index([firstName, lastName])
+}
+
+model Plan {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  description  String?
+  priceInCents Int
+  createdAt    DateTime @default(now())
+
+  memberships Membership[]
+}
+
+enum MembershipStatus {
+  ACTIVE
+  CANCELLED
+}
+
+model Membership {
+  id          String           @id @default(uuid())
+  memberId    String
+  planId      String
+  startDate   DateTime
+  cancelledAt DateTime?
+  status      MembershipStatus @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [planId], references: [id])
+
+  @@index([memberId, status])
+}
+
+model CheckIn {
+  id        String   @id @default(uuid())
+  memberId  String
+  timestamp DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, timestamp])
+}

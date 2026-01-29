@@ -1,0 +1,27 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "linter": {
+    "enabled": true
+  },
+  "formatter": {
+    "enabled": true
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    },
+    "linter": {
+      "enabled": true,
+      "rules": {
+        "suspicious": {
+          "noUnknownAtRules": {
+            "level": "warn",
+            "options": {
+              "ignore": ["tailwind"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
