@@ -1,7 +1,8 @@
-import { useMember } from '../hooks/useMembers';
-import { AssignPlanForm } from './AssignPlanForm';
-import { useCancelMembership } from '../hooks/useMemberships';
 import { useState } from 'react';
+import { useMember } from '../hooks/useMembers';
+import { useCancelMembership } from '../hooks/useMemberships';
+import { useCheckIn } from '../hooks/useCheckIn';
+import { AssignPlanForm } from './AssignPlanForm';
 
 interface MemberDetailProps {
   memberId: string;
@@ -10,6 +11,7 @@ interface MemberDetailProps {
 export function MemberDetail({ memberId }: MemberDetailProps) {
   const { data: member, isLoading, error } = useMember(memberId);
   const cancelMutation = useCancelMembership();
+  const checkInMutation = useCheckIn();
   const [showCancelForm, setShowCancelForm] = useState(false);
   const [cancelDate, setCancelDate] = useState('');
 
@@ -49,6 +51,20 @@ export function MemberDetail({ memberId }: MemberDetailProps) {
           <p className="font-medium">{member.checkInCountLast30Days}</p>
         </div>
       </div>
+
+      {member.activeMembership && (
+        <button
+          onClick={() => checkInMutation.mutate(memberId)}
+          disabled={checkInMutation.isPending}
+          className="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 disabled:opacity-50 font-medium"
+        >
+          {checkInMutation.isPending ? 'Checking in...' : 'Check In'}
+        </button>
+      )}
+
+      {checkInMutation.error && (
+        <p className="text-red-500 text-sm">{(checkInMutation.error as Error).message}</p>
+      )}
 
       {member.activeMembership ? (
         <div className="border border-green-200 bg-green-50 p-4 rounded">
