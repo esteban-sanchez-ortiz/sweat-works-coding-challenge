@@ -71,19 +71,22 @@ async function main() {
 
   console.log(`Created ${members.length} members`);
 
-  // Assign active membership to John
+  // Assign active membership to John (let Prisma generate UUID)
   const basicPlan = plans.find(p => p.name === 'Basic')!;
-  await prisma.membership.upsert({
-    where: { id: 'seed-membership-john' },
-    update: {},
-    create: {
-      id: 'seed-membership-john',
-      memberId: members[0].id,
-      planId: basicPlan.id,
-      startDate: new Date(),
-      status: 'ACTIVE',
-    },
+  const existingMembership = await prisma.membership.findFirst({
+    where: { memberId: members[0].id, status: 'ACTIVE' },
   });
+
+  if (!existingMembership) {
+    await prisma.membership.create({
+      data: {
+        memberId: members[0].id,
+        planId: basicPlan.id,
+        startDate: new Date(),
+        status: 'ACTIVE',
+      },
+    });
+  }
 
   console.log('Assigned Basic plan to John');
   console.log('Seeding complete!');
