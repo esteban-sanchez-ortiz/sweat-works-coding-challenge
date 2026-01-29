@@ -3,6 +3,7 @@ import express from 'express';
 import { prisma } from './lib/prisma';
 import { createMemberRoutes } from './routes/member.routes';
 import { createMembershipRoutes } from './routes/membership.routes';
+import { createCheckInRoutes } from './routes/checkin.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.get('/health', (_, res) => {
 // API routes
 app.use('/api/members', createMemberRoutes(prisma));
 app.use('/api/memberships', createMembershipRoutes(prisma));
+app.use('/api/check-ins', createCheckInRoutes(prisma));
 
 // 404 handler
 app.use((_, res) => {
